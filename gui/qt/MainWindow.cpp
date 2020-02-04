@@ -3,17 +3,19 @@
 //
 
 #include "MainWindow.h"
-//#include "FFT/FFT.h"
+#include "FFT/FFT.h"
+#include <iostream>
+#include <QDebug>
 
-MainWindow::MainWindow()/*
-    : analyser()*/ {
+MainWindow::MainWindow()
+    : analyser() {
 
     QPalette palette = this->palette();
 
     central = new QWidget;
     setCentralWidget(central);
 
-//    canvas = new AnalyserCanvas(analyser);
+   canvas = new AnalyserCanvas(analyser);
 
     vLayout1 = new QVBoxLayout(central);
     central->setLayout(vLayout1);
@@ -73,17 +75,17 @@ MainWindow::MainWindow()/*
             hLayout3->addLayout(fLayout4);
             {
                 inputToggleSpectrum = new QCheckBox;
-//                inputToggleSpectrum->setChecked(canvas->getDrawSpectrum());
+               inputToggleSpectrum->setChecked(canvas->getDrawSpectrum());
 
-                /* connect(inputToggleSpectrum, &QCheckBox::toggled,
-                        [&](const bool checked) { canvas->setDrawSpectrum(checked); }); */
+                connect(inputToggleSpectrum, &QCheckBox::toggled,
+                        [&](const bool checked) { canvas->setDrawSpectrum(checked); });
 
                 inputFftSize = new QComboBox;
                 inputFftSize->addItems({"256", "512", "1024", "2048", "4096", "8192", "16384"});
                 inputFftSize->setCurrentIndex(1);
 
-                /* connect(inputFftSize, QOverload<const QString &>::of(&QComboBox::currentIndexChanged),
-                        [&](const QString value) { analyser.setFftSize(value.toInt()); }); */
+                connect(inputFftSize, QOverload<const QString &>::of(&QComboBox::currentIndexChanged),
+                        [&](const QString value) { analyser.setFftSize(value.toInt()); });
 
                 inputMinGain = new QSpinBox;
                 inputMinGain->setRange(-200, 60);
@@ -95,56 +97,56 @@ MainWindow::MainWindow()/*
                 inputMaxGain->setSingleStep(10);
                 inputMaxGain->setSuffix(" dB");
 
-                /* connect(inputMinGain, QOverload<int>::of(&QSpinBox::valueChanged),
+                connect(inputMinGain, QOverload<int>::of(&QSpinBox::valueChanged),
                         [&](const int value) { canvas->setMinGainSpectrum(value);
                                                inputMaxGain->setMinimum(value + 10); });
 
                 connect(inputMaxGain, QOverload<int>::of(&QSpinBox::valueChanged),
                         [&](const int value) { canvas->setMaxGainSpectrum(value);
-                                               inputMinGain->setMaximum(value - 10); }); */
+                                               inputMinGain->setMaximum(value - 10); });
 
-                /* inputMinGain->setValue(canvas->getMinGainSpectrum());
-                inputMaxGain->setValue(canvas->getMaxGainSpectrum()); */
+                inputMinGain->setValue(canvas->getMinGainSpectrum());
+                inputMaxGain->setValue(canvas->getMaxGainSpectrum());
 
                 inputLpOrder = new QSpinBox;
                 inputLpOrder->setRange(5, 22);
-//                inputLpOrder->setValue(analyser.getLinearPredictionOrder());
+                inputLpOrder->setValue(analyser.getLinearPredictionOrder());
 
-                /* connect(inputLpOrder, QOverload<int>::of(&QSpinBox::valueChanged),
-                        [&](const int value) { analyser.setLinearPredictionOrder(value); }); */
+                connect(inputLpOrder, QOverload<int>::of(&QSpinBox::valueChanged),
+                        [&](const int value) { analyser.setLinearPredictionOrder(value); });
 
                 inputMaxFreq = new QSpinBox;
                 inputMaxFreq->setRange(2500, 7000);
                 inputMaxFreq->setStepType(QSpinBox::AdaptiveDecimalStepType);
                 inputMaxFreq->setSuffix(" Hz");
-//                inputMaxFreq->setValue(analyser.getMaximumFrequency());
+                inputMaxFreq->setValue(analyser.getMaximumFrequency());
 
-                /* connect(inputMaxFreq, QOverload<int>::of(&QSpinBox::valueChanged),
-                        [&](const int value) { analyser.setMaximumFrequency(value); }); */
+                connect(inputMaxFreq, QOverload<int>::of(&QSpinBox::valueChanged),
+                        [&](const int value) { analyser.setMaximumFrequency(value); });
 
                 inputFreqScale = new QComboBox;
                 inputFreqScale->addItems({"Linear", "Logarithmic", "Mel"});
                 inputFreqScale->setCurrentIndex(2);
 
-                /* connect(inputFreqScale, QOverload<int>::of(&QComboBox::currentIndexChanged),
-                        [&](const int value) { canvas->setFrequencyScale(value); }); */
+                connect(inputFreqScale, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                        [&](const int value) { canvas->setFrequencyScale(value); });
 
                 inputFrameSpace = new QSpinBox;
                 inputFrameSpace->setRange(5, 30);
                 inputFrameSpace->setSingleStep(1);
                 inputFrameSpace->setSuffix(" ms");
-//                inputFrameSpace->setValue(analyser.getFrameSpace().count());
+                inputFrameSpace->setValue(analyser.getFrameSpace().count());
 
-                /* connect(inputFrameSpace, QOverload<int>::of(&QSpinBox::valueChanged),
-                        [&](const int value) { analyser.setFrameSpace(std::chrono::milliseconds(value)); }); */
+                connect(inputFrameSpace, QOverload<int>::of(&QSpinBox::valueChanged),
+                        [&](const int value) { analyser.setFrameSpace(std::chrono::milliseconds(value)); });
 
                 inputWindowSpan = new QDoubleSpinBox;
                 inputWindowSpan->setRange(2, 30);
                 inputWindowSpan->setSingleStep(0.5);
                 inputWindowSpan->setSuffix(" s");
-//                inputWindowSpan->setValue(analyser.getWindowSpan().count());
+                inputWindowSpan->setValue(analyser.getWindowSpan().count());
 
-                /* connect(inputWindowSpan, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+                connect(inputWindowSpan, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
                         [&](const double value) { analyser.setWindowSpan(std::chrono::milliseconds(int(1000 * value))); });
 
                 for (int nb = 0; nb < 4; ++nb) {
@@ -164,7 +166,7 @@ MainWindow::MainWindow()/*
                             });
 
                     inputFormantColor[nb] = input;
-                } */
+                }
 
                 fLayout4->addRow(tr("Overlay spectrogram:"), inputToggleSpectrum);
                 fLayout4->addRow(tr("FFT size:"), inputFftSize);
@@ -178,12 +180,12 @@ MainWindow::MainWindow()/*
 
                 for (int nb = 0; nb < 4; ++nb) {
                     const QString labelStr = QString("F%1 color:").arg(nb + 1);
-                    // fLayout4->addRow(tr(qPrintable(labelStr)), inputFormantColor[nb]);
+                     fLayout4->addRow(tr(qPrintable(labelStr)), inputFormantColor[nb]);
                 }
             }
 
-//            hLayout3->addWidget(canvas);
-//            canvas->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+           hLayout3->addWidget(canvas);
+           canvas->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         }
     }
@@ -192,11 +194,11 @@ MainWindow::MainWindow()/*
     resize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     updateDevices();
-//    analyser.startThread();
+    analyser.startThread();
 
     timer.callOnTimeout(this, [&]() {
         updateFields();
-//        canvas->repaint();
+        canvas->repaint();
     });
     timer.start(1000.0 / 60.0);
 
@@ -210,14 +212,14 @@ MainWindow::~MainWindow() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
 
-//    analyser.stopThread();
-//    all_fft_cleanup();
+    analyser.stopThread();
+    all_fft_cleanup();
 
 }
 
 void MainWindow::updateFields() {
 
-    /* int frame = canvas->getSelectedFrame();
+    int frame = canvas->getSelectedFrame();
 
     const auto & formants = analyser.getFormantFrame(frame);
     double pitch = analyser.getPitchFrame(frame);
@@ -257,14 +259,17 @@ void MainWindow::updateFields() {
                 border: 1px solid #148CD2; \
             } \
         ").arg(c.name()));
-    } */
+    }
 
 }
 
+
 void MainWindow::updateDevices()
 {
-    /* const auto & inputs = devs.getInputs();
-    const auto & outputs = devs.getOutputs();
+
+
+    const auto & inputs = devs.getInputs();
+//    const auto & outputs = devs.getOutputs();
 
     inputDevIn->disconnect();
     inputDevIn->clear();
@@ -274,12 +279,15 @@ void MainWindow::updateDevices()
         inputDevIn->addItem(name, dev.id);
     }
 
-    inputDevIn->setCurrentIndex(inputDevIn->findData(Pa_GetDefaultInputDevice()));
+
+//    inputDevIn->setCurrentIndex(inputDevIn->findData(Pa_GetDefaultInputDevice()));
 
     connect(inputDevIn, QOverload<int>::of(&QComboBox::currentIndexChanged),
             [&](const int index) {
                 if (index >= 0) {
                     analyser.setInputDevice(inputDevIn->itemData(index).toInt());
                 }
-            });*/
+            });
+
+    inputDevIn->setCurrentIndex(inputDevIn->findData(devs.defaultInputDeviceId));
 }

@@ -23,9 +23,13 @@ int main(int argc, char * argv[])
 
     app.setStyle(QStyleFactory::create("Fusion"));
 
+    QFont _font = app.font();
+    _font.setPointSize(10);
+    _font.setPixelSize(20);
 //    appFont = QFont(loadFont(":/fonts/Montserrat-Medium.ttf"));
 //    appFont.setPixelSize(15);
 //    app.setFont(appFont);
+    app.setFont(_font);
 
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window, QColor(53,53,53));

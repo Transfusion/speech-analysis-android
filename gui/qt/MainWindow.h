@@ -8,7 +8,7 @@
 #include <QtWidgets>
 #include <QSharedPointer>
 #include <array>
-//#include "../../audio/AudioDevices.h"
+#include "../../audio/AudioDevices.h"
 #include "../canvas/AnalyserCanvas.h"
 
 extern QFont appFont;
@@ -26,8 +26,8 @@ private:
     void updateDevices();
     void updateFields();
 
-//    AudioDevices devs;
-//    Analyser analyser;
+    AudioDevices devs;
+    Analyser analyser;
 
     QTimer timer;
 
@@ -57,7 +57,7 @@ private:
     QSpinBox * inputMinGain;
     QSpinBox * inputMaxGain;
 
-//    AnalyserCanvas * canvas;
+    AnalyserCanvas * canvas;
 
     QLineEdit * fieldPitch;
     std::vector<QLineEdit *> fieldFormant;

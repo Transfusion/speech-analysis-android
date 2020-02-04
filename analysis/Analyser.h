@@ -6,17 +6,18 @@
 #define SPEECH_ANALYSIS_ANALYSER_H
 
 #include <QColor>
-//#include <Eigen/Core>
+#include <Eigen/Core>
 #include <deque>
 #include <thread>
 #include <memory>
-//#include "../audio/AudioCapture.h"
-//#include "../lib/Formant/Formant.h"
+#include "../audio/AudioCapture.h"
+#include "../lib/Formant/Formant.h"
+#include "../audio/AudioDevices.h"
 
 struct SpecFrame {
     double fs;
     int nfft;
-//    Eigen::ArrayXd spec;
+    Eigen::ArrayXd spec;
 };
 
 class Analyser {
@@ -49,11 +50,11 @@ public:
     [[nodiscard]] int getFrameCount();
 
     [[nodiscard]] const SpecFrame & getSpectrumFrame(int iframe);
-//    [[nodiscard]] const Formant::Frame & getFormantFrame(int iframe);
+    [[nodiscard]] const Formant::Frame & getFormantFrame(int iframe);
     [[nodiscard]] double getPitchFrame(int iframe);
 
     [[nodiscard]] const SpecFrame & getLastSpectrumFrame();
-//    [[nodiscard]] const Formant::Frame & getLastFormantFrame();
+    [[nodiscard]] const Formant::Frame & getLastFormantFrame();
     [[nodiscard]] double getLastPitchFrame();
 
     void setFrameCallback(std::function<void()> callback);
@@ -74,7 +75,8 @@ private:
     void applyMedianFilters();
 
     std::mutex audioLock;
-//    AudioCapture audioCapture;
+    AudioCapture audioCapture;
+    AudioDevices audioDevices;
 
     std::function<void()> newFrameCallback;
 
@@ -89,16 +91,16 @@ private:
     int lpOrder;
 
     // Intermediate variables for analysis.
-//    Eigen::ArrayXd x;
+    Eigen::ArrayXd x;
     double fs;
-//    LPC::Frame lpcFrame;
+    LPC::Frame lpcFrame;
 
     std::deque<SpecFrame> spectra;
-//    Formant::Frames formantTrack;
+    Formant::Frames formantTrack;
     std::deque<double> pitchTrack;
 
     SpecFrame lastSpectrumFrame;
-//    Formant::Frame lastFormantFrame;
+    Formant::Frame lastFormantFrame;
     double lastPitchFrame;
 
     // Thread-related members
