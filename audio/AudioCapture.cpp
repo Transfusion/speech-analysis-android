@@ -67,7 +67,7 @@ void AudioCapture::openInputDevice(int id) {
     inputStreamBuilder->setDirection(oboe::Direction::Input);
     inputStreamBuilder->setDeviceId(id);
     inputStreamBuilder->setChannelCount(1);
-//    inputStreamBuilder->setPerformanceMode(oboe::PerformanceMode::LowLatency);
+    inputStreamBuilder->setPerformanceMode(oboe::PerformanceMode::LowLatency);
     inputStreamBuilder->setCallback(this);
     inputStreamBuilder->setFormat(oboe::AudioFormat::Float);
 

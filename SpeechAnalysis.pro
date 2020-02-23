@@ -16,7 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 INCLUDEPATH += $$PWD/eigen
-#INCLUDEPATH += $$PWD/lib
+INCLUDEPATH += $$PWD/lib/
 
 # compiling both regular and android in the same project is
 # probably too much of a hassle
@@ -97,39 +97,71 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 # Libraries such as fftw3 go here
-STANDALONE_NDK_ROOT = /Users/transfusion/standalone_r20b_toolchain
+#STANDALONE_NDK_ROOT = /Users/transfusion/standalone_r20b_toolchain
+NDK_ROOT = $$ANDROID_NDK_ROOT
 
 contains(ANDROID_TARGET_ARCH,arm64-v8a) {
-    INCLUDEPATH += $$PWD/fftw-3.3.8_compiled/aarch64/include
-    LIBS += -L$$PWD/fftw-3.3.8_compiled/aarch64/lib
+    INCLUDEPATH += $$PWD/fftw-3.3.8_compiled/aarch64/usr/local/include
+    LIBS += -L$$PWD/fftw-3.3.8_compiled/aarch64/usr/local/lib
 
     INCLUDEPATH += $$PWD/oboe/include
     INCLUDEPATH += $$PWD/oboe/include/oboe
-    LIBS += -L$$PWD/oboe_compiled/aarch64
+    LIBS += -L$$PWD/oboe_compiled/aarch64/usr/local/lib
 
-    INCLUDEPATH += $$PWD/libspeech_compiled/aarch64/include
+#    INCLUDEPATH += $$PWD/lib # libspeech include!
     LIBS += -L$$PWD/libspeech_compiled/aarch64/lib
-
-    LIBS += -L$$STANDALONE_NDK_ROOT/sysroot/usr/lib/aarch64-linux-android/21
 }
 
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
-    INCLUDEPATH += $$PWD/fftw-3.3.8_compiled/arm/include
-    LIBS += -L$$PWD/fftw-3.3.8_compiled/arm/lib
+#    INCLUDEPATH += $$PWD/fftw-3.3.8_compiled/arm/usr/local/include
+#    LIBS += -L$$PWD/fftw-3.3.8_compiled/arm/lib
+
+#    INCLUDEPATH += $$PWD/oboe/include
+#    INCLUDEPATH += $$PWD/oboe/include/oboe
+#    LIBS += -L$$PWD/oboe_compiled/arm
+
+
+#    INCLUDEPATH += $$PWD/libspeech_compiled/arm/include
+#    LIBS += -L$$PWD/libspeech_compiled/arm/lib
+
+#    LIBS += -L$$STANDALONE_NDK_ROOT/sysroot/usr/lib/arm-linux-androideabi/21
+
+    INCLUDEPATH += $$PWD/fftw-3.3.8_compiled/arm/usr/local/include
+    LIBS += -L$$PWD/fftw-3.3.8_compiled/arm/usr/local/lib
 
     INCLUDEPATH += $$PWD/oboe/include
     INCLUDEPATH += $$PWD/oboe/include/oboe
-    LIBS += -L$$PWD/oboe_compiled/arm
+    LIBS += -L$$PWD/oboe_compiled/arm/usr/local/lib
 
-
-    INCLUDEPATH += $$PWD/libspeech_compiled/armv7a/include
+#    INCLUDEPATH += $$PWD/lib # libspeech include!
     LIBS += -L$$PWD/libspeech_compiled/arm/lib
+}
 
-    LIBS += -L$$STANDALONE_NDK_ROOT/sysroot/usr/lib/arm-linux-androideabi/21
+contains(ANDROID_TARGET_ARCH,x86) {
+    INCLUDEPATH += $$PWD/fftw-3.3.8_compiled/i686/usr/local/include
+    LIBS += -L$$PWD/fftw-3.3.8_compiled/i686/usr/local/lib
+
+    INCLUDEPATH += $$PWD/oboe/include
+    INCLUDEPATH += $$PWD/oboe/include/oboe
+    LIBS += -L$$PWD/oboe_compiled/i686/usr/local/lib
+
+    LIBS += -L$$PWD/libspeech_compiled/i686/lib
+}
+
+contains(ANDROID_TARGET_ARCH,x86_64) {
+    INCLUDEPATH += $$PWD/fftw-3.3.8_compiled/x86_64/usr/local/include
+    LIBS += -L$$PWD/fftw-3.3.8_compiled/x86_64/usr/local/lib
+
+    INCLUDEPATH += $$PWD/oboe/include
+    INCLUDEPATH += $$PWD/oboe/include/oboe
+    LIBS += -L$$PWD/oboe_compiled/x86_64/usr/local/lib
+
+    LIBS += -L$$PWD/libspeech_compiled/x86_64/lib
 }
 
 android {
     QT += androidextras
+    LIBS += -L$$NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/sysroot
     LIBS += -lfftw3
     LIBS += -loboe
     LIBS += -lOpenSLES
