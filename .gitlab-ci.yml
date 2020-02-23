@@ -1,0 +1,41 @@
+image: transfusion/qt-android-multiarch:5.14.1
+
+cache:
+  # key: ${CI_COMMIT_REF_SLUG}
+  # paths:
+  #   - android-sdk.zip
+  #   - qt-everywhere.tar.xz
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+# variables:
+#   ANDROID_COMPILE_SDK: "28"
+#   ANDROID_BUILD_TOOLS: "28.0.2"
+#   ANDROID_SDK_TOOLS:   "4333796"
+
+# before_script:
+  # - apt-get --quiet update --yes
+  # - apt-get --quiet install --yes wget tar unzip python3-pip openjdk-8-jdk
+  # - wget -c --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_TOOLS}.zip
+  # - unzip -d android-sdk-linux android-sdk.zip
+  # - echo y | android-sdk-linux/tools/bin/sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}" >/dev/null
+  # - echo y | android-sdk-linux/tools/bin/sdkmanager "platform-tools" >/dev/null
+  # - echo y | android-sdk-linux/tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null
+  # - export ANDROID_HOME=$PWD/android-sdk-linux
+  # - export PATH=$PATH:$PWD/android-sdk-linux/platform-tools/
+  # - wget -c --quiet --output-document=qt-everywhere.tar.xz http://download.qt.io/official_releases/qt/5.14/5.14.0/single/qt-everywhere-src-5.14.0.tar.xz
+  # -
+
+stages:
+  - build
+
+make_apk:
+  stage: build
+  script:
+    - ls /
+    - python3 build_native_dependencies.py --libs fftw3 oboe libspeech --sdk /android-ndk-r21
+    - ANDROID_SDK_ROOT=/android-sdk-linux/ ANDROID_NDK_ROOT=/android-ndk-r21/ /qt_root/5.14.1/android/bin/qmake ./SpeechAnalysis.pro -spec android-clang CONFIG+=qtquickcompiler 'ANDROID_ABIS=armeabi-v7a arm64-v8a x86 x86_64'
+    - make apk
+  artifacts:
+    paths:
+      - android-build/build/outputs/apk/debug
