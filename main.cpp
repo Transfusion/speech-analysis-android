@@ -67,9 +67,13 @@ int main(int argc, char * argv[])
     #endif
 
 //    Analyser analyser;
-    MainWindow mainWindow;
+    int ret;
 
-    return app.exec();
+    if (true)
+    { 
+        MainWindow mainWindow;
+        ret = app.exec();
+    }
 }
 
  #ifdef _WIN32

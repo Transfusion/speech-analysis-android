@@ -8,7 +8,6 @@
 #include <QtWidgets>
 #include <QTimer>
 #include <mutex>
-#include <array>
 #include "../../Exceptions.h"
 #include "../../analysis/Analyser.h"
 

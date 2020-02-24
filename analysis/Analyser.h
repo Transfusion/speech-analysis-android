@@ -11,8 +11,8 @@
 #include <thread>
 #include <memory>
 #include "../audio/AudioCapture.h"
-#include "../lib/Formant/Formant.h"
 #include "../audio/AudioDevices.h"
+#include "../lib/Formant/Formant.h"
 
 struct SpecFrame {
     double fs;
@@ -22,13 +22,13 @@ struct SpecFrame {
 
 class Analyser {
 public:
-    Analyser();
+    Analyser(AudioDevices & devs);
 
     void startThread();
     void stopThread();
 
     void toggle();
-
+    
     void setInputDevice(int id);
     void setOutputDevice(int id);
 

@@ -46,15 +46,15 @@ void Analyser::update()
 
     // Remove DC by subtraction of the mean.
     x -= x.mean();
-
+    
     // Apply windowing.
     applyWindow();
 
-    // Analyse spectrum if enabled.
-    analyseSpectrum();
-
     // Resample audio.
     resampleAudio(2 * maximumFrequency);
+    
+    // Analyse spectrum if enabled.
+    analyseSpectrum();
 
     // Get a pitch estimate.
     analysePitch();
@@ -78,10 +78,10 @@ void Analyser::update()
     pitchTrack.push_back(lastPitchFrame);
     formantTrack.pop_front();
     formantTrack.push_back(lastFormantFrame);
-
+    
     // Smooth out the tracks.
     applyMedianFilters();
-
+    
     // Unock the tracks.
     mutex.unlock();
 

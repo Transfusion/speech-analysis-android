@@ -8,14 +8,14 @@
 #include <QDebug>
 
 MainWindow::MainWindow()
-    : analyser() {
+    : devs(), analyser(devs) {
 
     QPalette palette = this->palette();
 
     central = new QWidget;
     setCentralWidget(central);
 
-   canvas = new AnalyserCanvas(analyser);
+    canvas = new AnalyserCanvas(analyser);
 
     vLayout1 = new QVBoxLayout(central);
     central->setLayout(vLayout1);
@@ -75,7 +75,7 @@ MainWindow::MainWindow()
             hLayout3->addLayout(fLayout4);
             {
                 inputToggleSpectrum = new QCheckBox;
-               inputToggleSpectrum->setChecked(canvas->getDrawSpectrum());
+                inputToggleSpectrum->setChecked(canvas->getDrawSpectrum());
 
                 connect(inputToggleSpectrum, &QCheckBox::toggled,
                         [&](const bool checked) { canvas->setDrawSpectrum(checked); });
@@ -96,7 +96,7 @@ MainWindow::MainWindow()
                 inputMaxGain->setRange(-200, 60);
                 inputMaxGain->setSingleStep(10);
                 inputMaxGain->setSuffix(" dB");
-
+                
                 connect(inputMinGain, QOverload<int>::of(&QSpinBox::valueChanged),
                         [&](const int value) { canvas->setMinGainSpectrum(value);
                                                inputMaxGain->setMinimum(value + 10); });
@@ -117,7 +117,7 @@ MainWindow::MainWindow()
 
                 inputMaxFreq = new QSpinBox;
                 inputMaxFreq->setRange(2500, 7000);
-                inputMaxFreq->setStepType(QSpinBox::AdaptiveDecimalStepType);
+                //inputMaxFreq->setStepType(QSpinBox::AdaptiveDecimalStepType);
                 inputMaxFreq->setSuffix(" Hz");
                 inputMaxFreq->setValue(analyser.getMaximumFrequency());
 
@@ -151,7 +151,7 @@ MainWindow::MainWindow()
 
                 for (int nb = 0; nb < 4; ++nb) {
                     auto input = new QPushButton;
-
+                    
                     connect(input, &QPushButton::clicked,
                             [=] () {
                                 QColor c = QColorDialog::getColor(
@@ -180,12 +180,12 @@ MainWindow::MainWindow()
 
                 for (int nb = 0; nb < 4; ++nb) {
                     const QString labelStr = QString("F%1 color:").arg(nb + 1);
-                     fLayout4->addRow(tr(qPrintable(labelStr)), inputFormantColor[nb]);
+                    fLayout4->addRow(tr(qPrintable(labelStr)), inputFormantColor[nb]);
                 }
             }
 
-           hLayout3->addWidget(canvas);
-           canvas->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            hLayout3->addWidget(canvas);
+            canvas->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         }
     }
@@ -196,7 +196,7 @@ MainWindow::MainWindow()
     updateDevices();
     analyser.startThread();
 
-    timer.callOnTimeout(this, [&]() {
+    connect(&timer, &QTimer::timeout, [&]() {
         updateFields();
         canvas->repaint();
     });
