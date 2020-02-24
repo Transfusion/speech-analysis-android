@@ -297,7 +297,7 @@ def build_libspeech(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--sdk", help="path to android sdk r20b or above")
+    parser.add_argument("--sdk", help="path to android ndk r20b or above")
     parser.add_argument('--libs', nargs='+', help="space separated list of {fftw3, eigen, libspeech, and oboe} to rebuild", required=True)
     parser.add_argument("--clean", help="clean instead of building the libraries specified with --libs", action="store_true")
 
