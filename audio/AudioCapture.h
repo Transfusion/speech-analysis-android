@@ -5,57 +5,43 @@
 #ifndef SPEECH_ANALYSIS_AUDIOCAPTURE_H
 #define SPEECH_ANALYSIS_AUDIOCAPTURE_H
 
-//#include <portaudio.h>
-#include <Oboe.h>
+#include "miniaudio.h"
 #include <Eigen/Core>
 #include "RingBuffer.h"
 
-#define CAPTURE_DURATION 35.0
+#define CAPTURE_DURATION 50.0
 #define CAPTURE_SAMPLE_COUNT(sampleRate) ((CAPTURE_DURATION * sampleRate) / 1000)
 
 #define BUFFER_SAMPLE_COUNT(sampleRate) (CAPTURE_SAMPLE_COUNT(sampleRate))
 
 struct RecordContext {
     RingBuffer buffer;
-//    PaSampleFormat format;
-    oboe::AudioFormat AudioFormat; // https://developer.android.com/reference/android/media/AudioFormat.html#ENCODING_PCM_16BIT
+    double sampleRate;
 };
 
-class AudioCapture: public oboe::AudioStreamCallback {
+class AudioCapture {
 public:
-    AudioCapture();
+    AudioCapture(ma_context * maCtx);
     ~AudioCapture();
 
-    void openInputDevice(int id);
-    void openOutputDevice(int id);
+    void openInputDevice(const ma_device_id * id);
+    void openOutputDevice(const ma_device_id * id);
     void startStream();
     void closeStream();
 
-    /* static int readCallback(const void * input, void * output,
-                     unsigned long frameCount,
-                     const PaStreamCallbackTimeInfo * timeInfo,
-                     PaStreamCallbackFlags statusFlags,
-                     void * userData); */
+    static void readCallback(ma_device *pDevice, void *pOutput, const void *pInput, ma_uint32 frameCount);
 
-    oboe::DataCallbackResult onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
+    void setCaptureDuration(int nsamples);
 
-    [[nodiscard]]
-    int getSampleRate() const noexcept;
+    [[nodiscard]] int getSampleRate() const noexcept;
 
     void readBlock(Eigen::ArrayXd & capture) noexcept;
 
 private:
-    // PaError err;
-    // PaStream * stream;
+    ma_context * maCtx;
+    bool deviceInit;
+    ma_device device;
 
-    // PaStreamParameters parameters;
-
-    // instead of storing the parameters we store the AudioStreamBuilder?
-    oboe::AudioStreamBuilder * inputStreamBuilder = nullptr;
-    float * inputFrames = nullptr;
-
-    // the active input device stream
-    oboe::AudioStream * inputStream = nullptr;
     double sampleRate;
 
     // Ring buffer

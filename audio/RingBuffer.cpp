@@ -3,7 +3,6 @@
 //
 
 #include "RingBuffer.h"
-#include <QDebug>
 
 using namespace Eigen;
 
@@ -17,10 +16,7 @@ void RingBuffer::writeInto(const ArrayXd & in)
 {
     std::lock_guard<std::mutex> lock(mut);
 
-//    qInfo() << "inside writeinto";
-
     const int toWrite = in.size();
-//    qInfo() << "size to be written " << toWrite;
     const int tailCount = capacity - writeCursor;
 
     auto dataIt = data.begin() + writeCursor;
@@ -66,6 +62,6 @@ void RingBuffer::setCapacity(int newCapacity)
     std::lock_guard<std::mutex> lock(mut);
 
     capacity = newCapacity;
-    data.resize(capacity, 0.0);
+    data.resize(capacity);
     writeCursor = 0;
 }

@@ -1,7 +1,9 @@
 #include <QApplication>
 #include <QStyleFactory>
 #include <iostream>
-#include "gui/qt/MainWindow.h"
+#include "gui/MainWindow.h"
+
+#include "log/simpleQtLogger.h"
 
 #ifdef Q_OS_ANDROID
 #include <QtAndroidExtras/QtAndroid>
@@ -21,6 +23,20 @@ int main(int argc, char * argv[])
 {
     QApplication app(argc, argv);
 
+    simpleqtlogger::ENABLE_LOG_SINK_FILE = true;
+    simpleqtlogger::ENABLE_LOG_SINK_CONSOLE = true;
+
+    simpleqtlogger::ENABLE_FUNCTION_STACK_TRACE = true;
+    simpleqtlogger::ENABLE_CONSOLE_COLOR = true;
+    simpleqtlogger::ENABLE_CONSOLE_TRIMMED = true;
+    simpleqtlogger::ENABLE_CONSOLE_LOG_FILE_STATE = true;
+
+    simpleqtlogger::SimpleQtLogger::createInstance(qApp);
+    auto logger = simpleqtlogger::SimpleQtLogger::getInstance();
+    logger->setLogFormat_file("<TS> [<LL>] <TEXT> (<FUNC>@<FILE>:<LINE>)", "<TS> [<LL>] <TEXT>");
+    logger->setLogLevels_file(simpleqtlogger::ENABLE_LOG_LEVELS);
+    logger->setLogFileName("speechanalysis.log", 10*1000*1000, 20);
+    logger->setLogLevels_console(simpleqtlogger::ENABLE_LOG_LEVELS);
     app.setStyle(QStyleFactory::create("Fusion"));
 
     QFont _font = app.font();

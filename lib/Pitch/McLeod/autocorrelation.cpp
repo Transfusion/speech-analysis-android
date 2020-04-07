@@ -7,7 +7,7 @@
 
 using Eigen::Map, Eigen::ArrayXcd;
 
-ArrayXd MPM::autocorrelation(Ref<const ArrayXd> x, int w) {
+ArrayXd MPM::autocorrelation(Ref<const ArrayXd> x) {
 
     const int N = x.size();
 
@@ -18,8 +18,8 @@ ArrayXd MPM::autocorrelation(Ref<const ArrayXd> x, int w) {
     fft(N);
     Map<ArrayXcd> out(fft_out(N), N);
 
-    Map<ArrayXcd>(ifft_in(N), N) = (out * conj(out)) / static_cast<double>(2 * N);
+    Map<ArrayXcd>(ifft_in(N), N) = (out * conj(out)) / static_cast<double>(N);
     ifft(N);
-    return Map<ArrayXcd>(ifft_out(N), N).real();
+    return Map<ArrayXcd>(ifft_out(N), N).real() / static_cast<double>(N);
 
 }

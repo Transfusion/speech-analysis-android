@@ -11,6 +11,11 @@
 
 #include "../LPC/LPC.h"
 
+struct root {
+    double r, phi;
+    double f, b;
+};
+
 namespace Formant
 {
     struct Formant {
@@ -34,6 +39,10 @@ namespace Formant
 
     double calculateVTL(const Frames & frames);
 
+    bool track(std::deque<Frame> & frms,
+               int ntrack,
+               double refF1, double refF2, double refF3, double refF4, double refF5,
+               double dfCost, double bfCost, double octaveJumpCost);
 }
 
 #endif //SPEECH_ANALYSIS_FORMANT_H

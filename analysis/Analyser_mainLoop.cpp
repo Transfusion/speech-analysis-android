@@ -7,13 +7,12 @@
 #include "../lib/Pitch/Pitch.h"
 #include "../lib/Signal/Filter.h"
 #include "../lib/Signal/Window.h"
-
+#include "../log/simpleQtLogger.h"
 using namespace Eigen;
 
 void Analyser::mainLoop()
 {
     using namespace std::chrono;
-
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
     while (running) {
@@ -38,53 +37,78 @@ void Analyser::update()
         return;
     }
 
+    // Param lock.
+//    paramLock.lock();
+    
     // Read captured audio.
     audioLock.lock();
-    audioCapture.readBlock(x);
-    fs = audioCapture.getSampleRate();
+    
+    x.conservativeResize(frameSamples);
+    audioCapture->readBlock(x);
+
+    x_fft.conservativeResize(fftSamples);
+    audioCapture->readBlock(x_fft);
+    
+    fs = audioCapture->getSampleRate();
+   
     audioLock.unlock();
 
     // Remove DC by subtraction of the mean.
     x -= x.mean();
-    
-    // Apply windowing.
-    applyWindow();
-
-    // Resample audio.
-    resampleAudio(2 * maximumFrequency);
-    
-    // Analyse spectrum if enabled.
-    analyseSpectrum();
 
     // Get a pitch estimate.
     analysePitch();
-
+    
+    // Resample audio.
+    resampleAudio(2 * maximumFrequency);
+    
+    // Apply windowing.
+    applyWindow();
+  
     // Apply pre-emphasis.
     applyPreEmphasis();
+    
+    // Analyse spectrum.
+    analyseSpectrum();
 
     // Perform LP analysis.
     analyseLp();
 
-    // Perform formant analysis from LP coefficients.
-    analyseFormantLp();
+    // Perform formant analysis.
+    analyseFormant();
 
     // Lock the tracks to prevent data race conditions.
     mutex.lock();
-
-    // Update the tracks.
-    spectra.pop_front();
-    spectra.push_back(lastSpectrumFrame);
+    
+    // Update the raw tracks.
     pitchTrack.pop_front();
     pitchTrack.push_back(lastPitchFrame);
     formantTrack.pop_front();
     formantTrack.push_back(lastFormantFrame);
+
+    // Apply postprocessing formant track correction.
+    if (formantMethod == LP) {
+        static int count = 0;
+        if (++count >= (frameCount / 100)) {
+            count = 0;
+            trackFormants();
+        }
+    }
     
-    // Smooth out the tracks.
-    applyMedianFilters();
-    
-    // Unock the tracks.
+    spectra.pop_front();
+    spectra.push_back(lastSpectrumFrame);
+
+    // Smooth out the pitch and formant tracks.
+    applySmoothingFilters();
+
+    // Set the has-new-frames flag.
+    for (auto & [k, v] : nbNewFrames) {
+        v++;
+    }
+
+    // Unlock the tracks.
     mutex.unlock();
 
-    // Invoke the new-frame callback function.
-    newFrameCallback();
+    // Unlock the parameters.
+//    paramLock.unlock();
 }

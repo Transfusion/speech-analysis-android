@@ -29,17 +29,22 @@ SOURCES += \
     analysis/Analyser_mainLoop.cpp \
     analysis/parts/formants.cpp \
     analysis/parts/lpc.cpp \
-    analysis/parts/median.cpp \
     analysis/parts/pitch.cpp \
     analysis/parts/preprocess.cpp \
     analysis/parts/resample.cpp \
     analysis/parts/spectrum.cpp \
+    analysis/parts/smooth.cpp \
+    analysis/parts/track.cpp \
     audio/AudioCapture.cpp \
     audio/AudioCapture_callbacks.cpp \
     audio/AudioDevices.cpp \
     audio/RingBuffer.cpp \
-    gui/canvas/AnalyserCanvas.cpp \
-    gui/qt/MainWindow.cpp \
+    audio/implementation.cpp \
+    gui/PowerSpectrum.cpp \
+    gui/AnalyserCanvas.cpp \
+    gui/MainWindow.cpp \
+    gui/ColorMaps.cpp \
+    log/simpleQtLogger.cpp \
 #    lib/FFT/FFT.cpp \
 #    lib/Formant/Formant.cpp \
 #    lib/LPC/Frame/LPC_Frame.cpp \
@@ -64,6 +69,7 @@ SOURCES += \
 #    lib/Signal/Filter.cpp \
 #    lib/Signal/Resample.cpp \
 #    lib/Signal/Window.cpp \
+    Exceptions.cpp \
     main.cpp
 
 HEADERS += \
@@ -72,8 +78,13 @@ HEADERS += \
     audio/AudioCapture.h \
     audio/AudioDevices.h \
     audio/RingBuffer.h \
-    gui/canvas/AnalyserCanvas.h \
-    gui/qt/MainWindow.h \
+    audio/miniaudio.h \
+    gui/PowerSpectrum.h \
+    gui/AnalyserCanvas.h \
+    gui/MainWindow.h \
+    gui/ColorMaps.h \
+    log/simpleQtLogger.h \
+    Exceptions.h
 #    lib/FFT/FFT.h \
 #    lib/Formant/Formant.h \
 #    lib/LPC/Frame/LPC_Frame.h \
